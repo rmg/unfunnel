@@ -24,6 +24,13 @@ Unfunnel.prototype.lookupEndpoint = function(name) {
   return null
 }
 
+// TODO: Implement better protocol
+// I think what I'm going to do is use len:16, type:8, id:32,
+// payload:(len-6). If type is data, ship payload directly to the stream
+// identified by id (derived from the given name, mapped locally). If
+// type is not data, then payload will be sent to the handler for that
+// message type. So far I'm imagining create and close as message types.
+
 Unfunnel.prototype.send = function(name, chunk, encoding, callback) {
   var packet = { "event": "data"
                , "name": name
