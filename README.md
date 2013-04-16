@@ -1,1 +1,3 @@
-== Unfunnel\nA simple stream muxer/demuxer
+# Unfunnel
+
+A simple stream muxer/demuxer
