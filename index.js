@@ -25,25 +25,39 @@ Unfunnel.prototype.lookupEndpoint = function(name) {
 }
 
 Unfunnel.prototype.send = function(name, chunk, encoding, callback) {
-  var packet = { "event": "write"
+  var packet = { "event": "data"
                , "name": name
                , "chunk": chunk
                , "encoding": encoding
                }
     , json = JSON.stringify(packet)
-    , buf = new Buffer(4 + json.length)
-  // console.log(json.length)
-  buf.writeUInt32LE(json.length, 0, true)
-  buf.write(json, 4)
+    , buf = new Buffer(2 + json.length)
+  buf.writeUInt16LE(json.length, 0, true)
+  buf.write(json, 2)
   return this.ostream.write(buf, callback)
 }
 
+Unfunnel.prototype.receive_packet = function() {
+  var raw, len
+  raw = this.istream.read(2)
+  if (raw) {
+    len = raw.readUInt16LE(0)
+    raw = this.istream.read(len)
+    if (raw)
+      return JSON.parse(raw)
+  }
+  return null
+}
+
 Unfunnel.prototype.receive = function() {
-  var len = this.istream.read(4).readUInt32LE(0)
-    , raw = this.istream.read(len)
-    , packet = JSON.parse(raw)
-    , endpoint = this.endpoint(packet.name)
-  endpoint.receive(new Buffer(packet.chunk), packet.encoding)
+  var packet, endpoint
+  while (packet = this.receive_packet()) {
+    endpoint = this.endpoint(packet.name)
+    if (packet.event == 'data')
+      endpoint.receive(new Buffer(packet.chunk), packet.encoding)
+    else
+      console.log("WTF?", packet)
+  }
 }
 
 module.exports = Unfunnel

@@ -5,7 +5,7 @@ var assert = require('assert')
 function assertReceives(eStream, eString, done) {
   return function () {
     var str = eStream.read().toString()
-    console.log(str, eString)
+    // console.log(str, eString)
     assert.equal(str, eString)
     done()
   }
@@ -40,24 +40,31 @@ describe("Unfunnel", function () {
   })
 
   it("should stream multiple streams over a single duplex stream", function (done) {
-    var count = 0
+    var read_count = 0
       , inc = function (err) {
-          count += 1
-          console.log("inc", count)
+          read_count += 1
           if (err)
             throw err
-          if (count == 4) {
-            client.close()
+          if (read_count == 4) {
+            client.end()
           }
         }
+      , close_count = 0
+      , close = function (err) {
+          close_count += 1
+          if (err)
+            throw err
+          if (close_count == 2) {
+            done()
+          }
+      }
       , testConn = function(a, b, outer_conn) {
           return function (conn) {
-            console.log("connection", a, b)
             conn = conn || outer_conn
             var mux = new Unfunnel(conn)
               , foo = mux.endpoint('foo')
               , bar = mux.endpoint('bar')
-            conn.on('end', done)
+            conn.on('end', close)
             foo.on('readable', assertReceives(foo, "foo_" + b, inc))
             bar.on('readable', assertReceives(bar, "bar_" + b, inc))
             foo.write("foo_" + a)
