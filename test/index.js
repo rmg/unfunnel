@@ -17,10 +17,10 @@ describe("Unfunnel", function () {
       , south = new stream.PassThrough()
       , a = new Unfunnel(north, south)
       , b = new Unfunnel(south, north)
-      , foo_a = a.endpoint('foo')
-      , foo_b = b.endpoint('foo')
-      , bar_a = a.endpoint('bar')
-      , bar_b = b.endpoint('bar')
+      , foo_a = a.endpoint(0x0f00)
+      , foo_b = b.endpoint(0x0f00)
+      , bar_a = a.endpoint(0x0ba0)
+      , bar_b = b.endpoint(0x0ba0)
       , count = 0
     function inc(err, something) {
       count += 1
@@ -62,8 +62,8 @@ describe("Unfunnel", function () {
           return function (conn) {
             conn = conn || outer_conn
             var mux = new Unfunnel(conn)
-              , foo = mux.endpoint('foo')
-              , bar = mux.endpoint('bar')
+              , foo = mux.endpoint(0x0f00)
+              , bar = mux.endpoint(0x0ba0)
             conn.on('end', close)
             foo.on('readable', assertReceives(foo, "foo_" + b, inc))
             bar.on('readable', assertReceives(bar, "bar_" + b, inc))
