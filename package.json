@@ -1,0 +1,21 @@
+{
+  "name": "unfunnel",
+  "version": "0.0.0",
+  "description": "A stream muxer/demuxer",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rmg/unfunnel.git"
+  },
+  "keywords": [
+    "stream"
+  ],
+  "author": "Ryan Graham <r.m.graham@gmail.com>",
+  "license": "BSD",
+  "devDependencies": {
+    "mocha": "~1.9.0"
+  }
+}
