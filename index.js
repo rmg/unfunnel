@@ -1,12 +1,20 @@
 var Endpoint = require('./lib/endpoint.js')
   , protocol = require('./lib/protocol.js')
+  , events   = require('events')
+  , util     = require('util')
 
 function Unfunnel(istream, ostream) {
+  if (!(this instanceof Unfunnel))
+    return new Unfunnel(istream, ostream)
+  events.EventEmitter.call(this)
+
   this.istream = istream
   this.ostream = ostream || istream
   this.endpoints = []
   this.istream.on('readable', this.receive.bind(this))
 }
+
+util.inherits(Unfunnel, events.EventEmitter)
 
 Unfunnel.prototype.endpoint = function(name) {
   var endpoint = this.lookupEndpoint(name)
