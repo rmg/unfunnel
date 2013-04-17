@@ -16,6 +16,19 @@ function Unfunnel(istream, ostream) {
 
 util.inherits(Unfunnel, events.EventEmitter)
 
+Unfunnel.prototype.createEndpoint = function(options) {
+  var endpoint
+  if (options.name && this.lookupEndpoint(options.name)) {
+    throw new Error("Endpoints must have unique names")
+  }
+  if (options.id && this.findEndpointByID(options.id)) {
+    throw new Error("Endpoints must have unique names")
+  }
+  endpoint = new Endpoint(this, options)
+  this.endpoints.unshift(endpoint)
+  return endpoint
+}
+
 Unfunnel.prototype.endpoint = function(name) {
   var endpoint = this.lookupEndpoint(name)
   if (!endpoint) {
@@ -23,6 +36,14 @@ Unfunnel.prototype.endpoint = function(name) {
     this.endpoints.unshift(endpoint)
   }
   return endpoint
+}
+
+Unfunnel.prototype.findEndpointByID = function(id) {
+  for (var e = this.endpoints.length - 1; e >= 0; e--) {
+    if (this.endpoints[e].id == id)
+      return this.endpoints[e]
+  }
+  return null
 }
 
 Unfunnel.prototype.lookupEndpoint = function(name) {
@@ -33,15 +54,20 @@ Unfunnel.prototype.lookupEndpoint = function(name) {
   return null
 }
 
-Unfunnel.prototype.send = function(name, chunk, encoding, callback) {
-  var packet = protocol.encode(name, chunk, encoding)
+Unfunnel.prototype.send = function(endpoint, chunk, encoding, callback) {
+  var packet = protocol.encode(endpoint.id, chunk, encoding)
   return this.ostream.write(packet, callback)
 }
 
 Unfunnel.prototype.receive_packet = function(in_stream) {
   var packet = protocol.decode(in_stream)
-  if (packet)
-    packet.endpoint = this.endpoint(packet.id)
+  if (packet) {
+    packet.endpoint = this.findEndpointByID(packet.id)
+    if (!packet.endpoint) {
+      packet.endpoint = this.createEndpoint({id: packet.id})
+      this.emit("endpoint", packet.endpoint)
+    }
+  }
   return packet
 }
 
