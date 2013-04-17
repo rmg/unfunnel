@@ -17,14 +17,13 @@ function Unfunnel(istream, ostream) {
 util.inherits(Unfunnel, events.EventEmitter)
 
 Unfunnel.prototype.createEndpoint = function(options) {
-  var endpoint
+  var endpoint = new Endpoint(this, options)
   if (options.name && this.lookupEndpoint(options.name)) {
     throw new Error("Endpoints must have unique names")
   }
   if (options.id && this.findEndpointByID(options.id)) {
     throw new Error("Endpoints must have unique names")
   }
-  endpoint = new Endpoint(this, options)
   this.endpoints.unshift(endpoint)
   return endpoint
 }
