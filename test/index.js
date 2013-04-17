@@ -4,7 +4,7 @@ var assert = require('assert')
 
 function assertReceives(eStream, eString, done) {
   return function () {
-    var str = eStream.read().toString()
+    var str = eStream.read()
     // console.log(str, eString)
     assert.equal(str, eString)
     done()
