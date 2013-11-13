@@ -16,6 +16,6 @@
   "author": "Ryan Graham <r.m.graham@gmail.com>",
   "license": "BSD",
   "devDependencies": {
-    "mocha": "~1.9.0"
+    "mocha": "~1.14.0"
   }
 }
