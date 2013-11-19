@@ -20,9 +20,9 @@ var north = new stream.PassThrough()
   , b_a = b.endpoint('foo')
 b_a.on('readable', function() {
   console.log(b_a.read().toString())
-  // assert( b_a.read() == "monkey!" )
+  // assert( b_a.read() == 'monkey!' )
 })
-a_b.write("monkey!")
+a_b.write('monkey!')
 
 ;(function () {
   var count = 0
@@ -31,20 +31,20 @@ a_b.write("monkey!")
         if (err)
           throw err
         if (count == 4)
-          console.log("done!")
+          console.log('done!')
           // done()
       }
     , testConn = function(a, b, outer_conn) {
         return function (conn) {
-          console.log("connection", a, b)
+          console.log('connection', a, b)
           conn = conn || outer_conn
           var mux = new Unfunnel(conn)
             , foo = mux.endpoint('foo')
             , bar = mux.endpoint('bar')
-          foo.on('readable', assertReceives(foo, "foo_" + b, inc))
-          bar.on('readable', assertReceives(bar, "bar_" + b, inc))
-          foo.write("foo_" + a)
-          bar.write("bar_" + a)
+          foo.on('readable', assertReceives(foo, 'foo_' + b, inc))
+          bar.on('readable', assertReceives(bar, 'bar_' + b, inc))
+          foo.write('foo_' + a)
+          bar.write('bar_' + a)
         }
       }
     , server = net.createServer(testConn('north', 'south'))

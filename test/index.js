@@ -11,8 +11,8 @@ function assertReceives(eStream, eString, done) {
   }
 }
 
-describe("Unfunnel", function () {
-  describe("over stream.PassThrough streams", function () {
+describe('Unfunnel', function () {
+  describe('over stream.PassThrough streams', function () {
     var north = new stream.PassThrough()
       , south = new stream.PassThrough()
       , a = new Unfunnel(north, south)
@@ -30,20 +30,20 @@ describe("Unfunnel", function () {
       if (count == 4)
         ender()
     }
-    it("should handle multiple streams", function (done) {
+    it('should handle multiple streams', function (done) {
       ender = done
-      foo_a.on('readable', assertReceives(foo_a, "foo_b", inc))
-      foo_b.on('readable', assertReceives(foo_b, "foo_a", inc))
-      bar_a.on('readable', assertReceives(bar_a, "bar_b", inc))
-      bar_b.on('readable', assertReceives(bar_b, "bar_a", inc))
-      foo_a.write("foo_a")
-      foo_b.write("foo_b")
-      bar_a.write("bar_a")
-      bar_b.write("bar_b")
+      foo_a.on('readable', assertReceives(foo_a, 'foo_b', inc))
+      foo_b.on('readable', assertReceives(foo_b, 'foo_a', inc))
+      bar_a.on('readable', assertReceives(bar_a, 'bar_b', inc))
+      bar_b.on('readable', assertReceives(bar_b, 'bar_a', inc))
+      foo_a.write('foo_a')
+      foo_b.write('foo_b')
+      bar_a.write('bar_a')
+      bar_b.write('bar_b')
     })
   })
-  describe("over a single duplex stream (net)", function () {
-    it("should stream multiple streams over a single duplex stream", function (done) {
+  describe('over a single duplex stream (net)', function () {
+    it('should stream multiple streams over a single duplex stream', function (done) {
       var read_count = 0
         , inc = function (err) {
             read_count += 1
@@ -69,10 +69,10 @@ describe("Unfunnel", function () {
                 , foo = mux.endpoint('foo')
                 , bar = mux.endpoint('bar')
               conn.on('end', close)
-              foo.on('readable', assertReceives(foo, "foo_" + b, inc))
-              bar.on('readable', assertReceives(bar, "bar_" + b, inc))
-              foo.write("foo_" + a)
-              bar.write("bar_" + a)
+              foo.on('readable', assertReceives(foo, 'foo_' + b, inc))
+              bar.on('readable', assertReceives(bar, 'bar_' + b, inc))
+              foo.write('foo_' + a)
+              bar.write('bar_' + a)
             }
           }
         , net = require('net')
